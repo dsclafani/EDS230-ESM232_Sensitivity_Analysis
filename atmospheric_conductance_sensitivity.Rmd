@@ -45,6 +45,7 @@ head(sens_pars)
 atmospheric_conductance = sens_pars %>% pmap(atmos_conduct)
 head(atmospheric_conductance)
 ```
+
 ```{r}
 # turn results in to a dataframe for easy display/analysis
 atmospheric_conductancedf = atmospheric_conductance %>% map_dfr(`[`,c("atmospheric_conductance"))
@@ -60,15 +61,57 @@ atmospheric_conductancedf = atmospheric_conductance %>% map_dfr(`[`,c("atmospher
 sens_atmos_cond = pse::tell(sens_atmos_cond, t(as.matrix(atmospheric_conductancedf)),
                         res.names=c("atmospheric_conductance"))
 ```
+
 ```{r}
-# now we use built in LHS functions to analyze parameter sensitivity
-pse::plotscatter(sens_atmos_cond, col="blue", cex=5)
+# now we use built in LHS functions to analyze parameter sensitivity (d)
+pse::plotscatter(sens_atmos_cond, col="blue", cex=5) 
 ```
 
 ```{r}
-# add uncertainty bounds on our estimates
-tmp = atmospheric_conductancedf %>% gather(value="value", key="atmospheric_conductance")
-ggplot(tmp, aes(atmospheric_conductance, value, col=atmospheric_conductance))+geom_boxplot()+
-  labs(y="Atmospheric Conductance (cm/s)")
+# add uncertainty bounds on our estimates (c)
+# tmp = atmospheric_conductancedf %>% gather(value="value", key="atmospheric_conductance")
+
+tmp = atmospheric_conductancedf %>%
+  mutate(type = "atmospheric_conductance") %>% 
+  rename(value = atmospheric_conductance)
+  
+ggplot(tmp, aes(atmospheric_conductance, value))+
+  geom_boxplot()+
+  labs(y="Atmospheric Conductance (cm/s)") +
+  theme_classic()
+```
+
+```{r}
+# Estimate the Partial Rank Correlation Coefficients (e)
+# PSE: object has partial rank correlation coefficients
+
+# prcc's automatically generated and easy to plot
+pse::plotprcc(sens_atmos_cond)
+# more negative/more positve the value, the more sensitve your object is to 
+
+# PRCC for all 3 output metrix
+sens_atmos_cond$res.names
+sens_atmos_cond$prcc
+
+# correlation coefficient
+# compare PRCC with first correlation coefficient
+# recall
+head(atmospheric_conductancedf)
+sens_atmos_cond$prcc[1]
+
+# we can still use our sens_pars data frame - rows of parameters will be
+# match rows in the output from our use of pmap to run the model for all 
+# parameters
+cor(atmospheric_conductancedf$atmospheric_conductance, sens_pars$h, method="spearman")
+cor(atmospheric_conductancedf$atmospheric_conductance, sens_pars$k_d, method="spearman")
+cor(atmospheric_conductancedf$atmospheric_conductance, sens_pars$k_0, method="spearman")
+cor(atmospheric_conductancedf$atmospheric_conductance, sens_pars$v, method="spearman")
+```
+
+```{r}
+# Discuss what your results tell you about how aerodynamic conductance varies with the different parameters? What does it suggest about what you should focus on if you want to reduce uncertainty in aerodymaic conductance estimates?
+# Does this tell you anything about the sensitivity of plant water use to climate change? (f) 
+
+# atmospheric conductance is most sensitive to v (windspeed), followed by k_d, k_0, and h (vegetation height). 
 ```
 
