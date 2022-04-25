@@ -54,22 +54,13 @@ head(atmospheric_conductance)
 # turn results in to a dataframe for easy display/analysis
 atmospheric_conductancedf = atmospheric_conductance %>% map_dfr(`[`,c("atmospheric_conductance"))
 
-# to take advantage of LHS/pse functions for 
-# plotting interesting information we can send results back - 
-# results need to be in a matrix
-# each column is a different parameter set - we can use transpose (t)
-# and as.matrix to get there
-
-# tell is what links output to original LHS object
-
+# tell links output to original LHS object once results are in matrix
 sens_atmos_cond = pse::tell(sens_atmos_cond, t(as.matrix(atmospheric_conductancedf)),
                         res.names=c("atmospheric_conductance"))
 ```
 
 ```{r}
 # add uncertainty bounds on our estimates (c)
-# tmp = atmospheric_conductancedf %>% gather(value="value", key="atmospheric_conductance")
-
 tmp = atmospheric_conductancedf %>%
   mutate(type = "atmospheric_conductance") %>% 
   rename(value = atmospheric_conductance)
@@ -92,9 +83,9 @@ pse::plotscatter(sens_atmos_cond, col="blue", cex=5)
 
 # prcc's automatically generated and easy to plot
 pse::plotprcc(sens_atmos_cond)
-# more negative/more positve the value, the more sensitve your object is to 
+# more negative/more positive the value, the more sensitive your object is to 
 
-# PRCC for all 3 output metrix
+# PRCC for all 3 output metrics
 sens_atmos_cond$res.names
 sens_atmos_cond$prcc
 
@@ -114,7 +105,7 @@ cor(atmospheric_conductancedf$atmospheric_conductance, sens_pars$v, method="spea
 ```
 
 ## Discussion
-Discuss what your results tell you about how aerodynamic conductance varies with the different parameters? What does it suggest about what you should focus on if you want to reduce uncertainty in aerodynamic conductance estimates? Does this tell you anything about the sensitivity of plant water use to climate change? (f) 
+***Discuss what your results tell you about how aerodynamic conductance varies with the different parameters? What does it suggest about what you should focus on if you want to reduce uncertainty in aerodynamic conductance estimates? Does this tell you anything about the sensitivity of plant water use to climate change? (f) ***
 
-Our results indicate that atmospheric conductance is most sensitive to v (windspeed), followed by k_d, k_0, and h (vegetation height). This means that getting more precise wind speed would help significantly reduce the uncertainty in aerodynamic conductance estimates. Climate change is expected to have a significant impact on weather patterns around the world with an expected decrease in mean wind speed in most regions. However, it is important to note that the changes will depend locally so it's hard to generalize without setting a more specific region of interest. Another factor to consider is the rise in stomatal conductance due to global rise in temperature which also affects plant water use. 
+Our results indicate that atmospheric conductance is most sensitive to v which is wind speed, followed by k_d, k_0, and h (vegetation height). This means that getting more precise wind speed would help significantly reduce the uncertainty in aerodynamic conductance estimates. Climate change is expected to have a significant impact on weather patterns around the world with an expected decrease in mean wind speed in most regions. However, it is important to note that the changes will depend locally so it's hard to generalize without setting a more specific region of interest. Another factor to consider is the rise in stomatal conductance due to global rise in temperature which also affects plant water use. 
 
