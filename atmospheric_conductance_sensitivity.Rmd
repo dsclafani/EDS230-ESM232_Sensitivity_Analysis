@@ -2,9 +2,10 @@
 title: "Atmospheric Conductance Sensitivity Analysis"
 author: "Elmera Azadpour, Danielle Sciafani, Desik Somasundaram"
 date: '2022-04-21'
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
-
 
 ## Setup
 ```{r setup, include=FALSE}
@@ -19,7 +20,6 @@ source(here("functions","atmospheric_conductance.R"))
 ```
 
 ## Analysis
-
 ```{r}
 #test function
 atmos_conduct(1000, 250)
@@ -48,8 +48,8 @@ head(sens_pars)
 atmospheric_conductance = sens_pars %>% pmap(atmos_conduct)
 head(atmospheric_conductance)
 ```
-## Results and Visualizations
 
+## Results and Visualizations
 ```{r}
 # turn results in to a dataframe for easy display/analysis
 atmospheric_conductancedf = atmospheric_conductance %>% map_dfr(`[`,c("atmospheric_conductance"))
